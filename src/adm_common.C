@@ -242,7 +242,7 @@ void inc_waw_false_matrix(uint64_t address1, uint64_t address2, int a, int b, do
   if(obj1 && obj2){
       if(obj1->get_object_id() == obj2->get_object_id())
   	    obj1->inc_fs_matrix(a, b, inc);
-      obj1->inc_writer_count(a, inc);
+      //obj1->inc_writer_count(a, inc);
       obj2->inc_writer_count(b, inc);
   }
 }
@@ -257,13 +257,13 @@ void inc_waw_false_matrix_by_object_id(int object_id, int a, int b, double inc)
 
   if(obj) {
   	obj->inc_fs_matrix(a, b, inc);
-    obj->inc_writer_count(a, inc);
+    //obj->inc_writer_count(a, inc);
     obj->inc_writer_count(b, inc);
   } else {
 	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
 	if(obj) {
 		obj->inc_fs_matrix(a, b, inc);
-        obj->inc_writer_count(a, inc);
+        //obj->inc_writer_count(a, inc);
         obj->inc_writer_count(b, inc);
       		if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
         		get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
@@ -311,7 +311,7 @@ void inc_raw_false_matrix(uint64_t address1, uint64_t address2, int a, int b, do
   if(obj1 && obj2){
       if(obj1->get_object_id() == obj2->get_object_id())
   	    obj1->inc_fs_matrix(a, b, inc);
-      obj1->inc_writer_count(a, inc);
+      //obj1->inc_writer_count(a, inc);
       obj2->inc_reader_count(b, inc);
   }
 }
@@ -326,13 +326,13 @@ void inc_raw_false_matrix_by_object_id(int object_id, int a, int b, double inc)
 
   if(obj) {
   	obj->inc_fs_matrix(a, b, inc);
-    obj->inc_writer_count(a, inc);
+    //obj->inc_writer_count(a, inc);
     obj->inc_reader_count(b, inc);
   } else {
 	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
 	if(obj) {
 		obj->inc_fs_matrix(a, b, inc);
-        obj->inc_writer_count(a, inc);
+        //obj->inc_writer_count(a, inc);
         obj->inc_reader_count(b, inc);
       	if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
         	get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
@@ -455,7 +455,7 @@ void inc_waw_true_matrix(uint64_t address, int a, int b, double inc)
   adm_object_t* obj = adm_db_find_by_address(address);
   if(obj) {
     obj->inc_ts_matrix(a, b, inc);
-    obj->inc_writer_count(a, inc);
+    //obj->inc_writer_count(a, inc);
     obj->inc_writer_count(b, inc);
   }
 }
@@ -469,13 +469,13 @@ void inc_waw_true_matrix_by_object_id(int object_id, int a, int b, double inc)
 
   if(obj) {
   	obj->inc_ts_matrix(a, b, inc);
-    obj->inc_writer_count(a, inc);
+    //obj->inc_writer_count(a, inc);
     obj->inc_writer_count(b, inc);
   } else {
 	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
 	if(obj) {
 		obj->inc_ts_matrix(a, b, inc);
-        obj->inc_writer_count(a, inc);
+        //obj->inc_writer_count(a, inc);
         obj->inc_writer_count(b, inc);
       	if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
         	get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
@@ -491,7 +491,7 @@ void inc_raw_true_matrix(uint64_t address, int a, int b, double inc)
   adm_object_t* obj = adm_db_find_by_address(address);
   if(obj) {
     obj->inc_ts_matrix(a, b, inc);
-    obj->inc_writer_count(a, inc);
+    //obj->inc_writer_count(a, inc);
     obj->inc_reader_count(b, inc);
   }
 }
@@ -505,13 +505,13 @@ void inc_raw_true_matrix_by_object_id(int object_id, int a, int b, double inc)
 
   if(obj) {
   	obj->inc_ts_matrix(a, b, inc);
-    obj->inc_writer_count(a, inc);
+    //obj->inc_writer_count(a, inc);
     obj->inc_reader_count(b, inc);
   } else {
 	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
 	if(obj) {
 		obj->inc_ts_matrix(a, b, inc);
-        obj->inc_writer_count(a, inc);
+        //obj->inc_writer_count(a, inc);
         obj->inc_reader_count(b, inc);
       	if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
         	get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));

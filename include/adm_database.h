@@ -243,9 +243,9 @@ class adm_object_t
 	pthread_mutex_unlock(&ts_core_count_lock);
     };
 
-    void inc_reader_count(int tid, double inc) { reader_count[tid] = reader_count[tid] + 1; };
+    void inc_reader_count(int tid, double inc) { reader_count[tid] = reader_count[tid] + inc;};
 
-    void inc_writer_count(int tid, double inc) { writer_count[tid] = writer_count[tid] + 1; };
+    void inc_writer_count(int tid, double inc) { writer_count[tid] = writer_count[tid] + inc;};
 
     double get_fs_count() const noexcept { return false_sharing_count; };
 
@@ -365,8 +365,8 @@ class adm_object_t
             if(writer_count[i]!=0)
                 writers++;
         }
-        printf("For object %d: Readers: %d, Writers: %d\n", object_id, readers, writers);
-        if(writers == 0 && readers == 0){
+        //printf("For object %d: Readers: %d, Writers: %d\n", object_id, readers, writers);
+        if(writers == 0 && readers >= 0){
             return READONLY;
         } else if((writers == 1 && readers == 0)){
             return THEO_PRIVATE;
@@ -380,9 +380,8 @@ class adm_object_t
             return MIGRATORY;
         } else if(writers > 0) { // from the last check we know that readers>writers, one last error check
             return PRODUCER_CONSUMER;
-        } else { // one or multiple readers and no writers (since we do not detect RAR, return error)
-            return -1;
         }
+        return -1;
     }
 
 };
