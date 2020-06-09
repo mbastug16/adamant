@@ -197,74 +197,29 @@ char * adm_get_var_name(uint64_t address)
 
 extern "C"
 //__attribute__((destructor))
-void inc_false_count(uint64_t address1, uint64_t address2, double inc)
-{
-  //fprintf(stderr, "increment per object happens for false sharing\n");
-  adm_object_t* obj1 = adm_db_find_by_address(address1);
-  adm_object_t* obj2 = adm_db_find_by_address(address2);
-
-  //fprintf(stderr, "increment per object happens for false sharing on object with ids %d and %d\n", obj1->get_object_id(), obj2->get_object_id());
-
-  if(obj1 && obj2) {
- 	int id1 = obj1->get_object_id();
-	int id2 = obj2->get_object_id();
-        if((id1 == id2) && (id1 > 1)) {
-                obj1->inc_fs_count(inc);
-        } 
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_false_count_by_object_id(int object_id, double inc)
-{
-  //fprintf(stderr, "increment per object happens for false sharing\n");
-  adm_object_t* obj = adm_db_find_by_object_id(object_id); 
-
-  if(obj) {
-  	obj->inc_fs_count(inc);
-  } else {
-	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
-	if(obj) {
-		obj->inc_fs_count(inc);
-      		if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
-        		get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
-    	}
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_waw_false_matrix(uint64_t address1, uint64_t address2, int a, int b, double inc)
+void inc_false_matrix(uint64_t address1, uint64_t address2, int a, int b, double inc)
 {
   adm_object_t* obj1 = adm_db_find_by_address(address1);
   adm_object_t* obj2 = adm_db_find_by_address(address2);
-  if(obj1 && obj2){
-      if(obj1->get_object_id() == obj2->get_object_id())
-  	    obj1->inc_fs_matrix(a, b, inc);
-      //obj1->inc_writer_count(a, inc);
-      obj2->inc_writer_count(b, inc);
+  if(obj1 && obj2 && (obj1->get_object_id() == obj2->get_object_id())) {
+  	obj1->inc_fs_matrix(a, b, inc);
   }
 }
 
 // before
 extern "C"
 //__attribute__((destructor))
-void inc_waw_false_matrix_by_object_id(int object_id, int a, int b, double inc)
+void inc_false_matrix_by_object_id(int object_id, int a, int b, double inc)
 {
   //fprintf(stderr, "increment per object happens for false sharing\n");
   adm_object_t* obj = adm_db_find_by_object_id(object_id); 
 
   if(obj) {
   	obj->inc_fs_matrix(a, b, inc);
-    //obj->inc_writer_count(a, inc);
-    obj->inc_writer_count(b, inc);
   } else {
 	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
 	if(obj) {
 		obj->inc_fs_matrix(a, b, inc);
-        //obj->inc_writer_count(a, inc);
-        obj->inc_writer_count(b, inc);
       		if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
         		get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
     	}
@@ -304,42 +259,41 @@ void inc_false_core_matrix_by_object_id(int object_id, int a, int b, double inc)
 
 extern "C"
 //__attribute__((destructor))
-void inc_raw_false_matrix(uint64_t address1, uint64_t address2, int a, int b, double inc)
+void inc_false_count(uint64_t address1, uint64_t address2, double inc)
 {
+  //fprintf(stderr, "increment per object happens for false sharing\n");
   adm_object_t* obj1 = adm_db_find_by_address(address1);
   adm_object_t* obj2 = adm_db_find_by_address(address2);
-  if(obj1 && obj2){
-      if(obj1->get_object_id() == obj2->get_object_id())
-  	    obj1->inc_fs_matrix(a, b, inc);
-      //obj1->inc_writer_count(a, inc);
-      obj2->inc_reader_count(b, inc);
+
+  //fprintf(stderr, "increment per object happens for false sharing on object with ids %d and %d\n", obj1->get_object_id(), obj2->get_object_id());
+
+  if(obj1 && obj2) {
+ 	int id1 = obj1->get_object_id();
+	int id2 = obj2->get_object_id();
+        if((id1 == id2) && (id1 > 1)) {
+                obj1->inc_fs_count(inc);
+        } 
   }
 }
 
-// before
 extern "C"
 //__attribute__((destructor))
-void inc_raw_false_matrix_by_object_id(int object_id, int a, int b, double inc)
+void inc_false_count_by_object_id(int object_id, double inc)
 {
   //fprintf(stderr, "increment per object happens for false sharing\n");
   adm_object_t* obj = adm_db_find_by_object_id(object_id); 
 
   if(obj) {
-  	obj->inc_fs_matrix(a, b, inc);
-    //obj->inc_writer_count(a, inc);
-    obj->inc_reader_count(b, inc);
+  	obj->inc_fs_count(inc);
   } else {
 	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
 	if(obj) {
-		obj->inc_fs_matrix(a, b, inc);
-        //obj->inc_writer_count(a, inc);
-        obj->inc_reader_count(b, inc);
-      	if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
-        	get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
-    }
+		obj->inc_fs_count(inc);
+      		if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
+        		get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
+    	}
   }
 }
-// after
 
 extern "C"
 int get_object_id_by_address(uint64_t address)
@@ -388,6 +342,64 @@ void inc_false_core_count_by_object_id(int object_id, double inc)
   }
 }
 
+extern "C"
+//__attribute__((destructor))
+void inc_true_matrix(uint64_t address, int a, int b, double inc)
+{
+  //fprintf(stderr, "increment per object happens for true sharing\n");
+  adm_object_t* obj = adm_db_find_by_address(address);
+  if(obj) {
+    obj->inc_ts_matrix(a, b, inc);
+  }
+}
+
+extern "C"
+//__attribute__((destructor))
+void inc_true_matrix_by_object_id(int object_id, int a, int b, double inc)
+{
+  //fprintf(stderr, "increment per object happens for false sharing\n");
+  adm_object_t* obj = adm_db_find_by_object_id(object_id); 
+
+  if(obj) {
+  	obj->inc_ts_matrix(a, b, inc);
+  } else {
+	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
+	if(obj) {
+		obj->inc_ts_matrix(a, b, inc);
+      		if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
+        		get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
+    	}
+  }
+}
+
+extern "C"
+//__attribute__((destructor))
+void inc_true_core_matrix(uint64_t address, int a, int b, double inc)
+{
+  adm_object_t* obj = adm_db_find_by_address(address);
+  if(obj) {
+    obj->inc_ts_core_matrix(a, b, inc);
+  }
+}
+
+extern "C"
+//__attribute__((destructor))
+void inc_true_core_matrix_by_object_id(int object_id, int a, int b, double inc)
+{
+  //fprintf(stderr, "increment per object happens for false sharing\n");
+  adm_object_t* obj = adm_db_find_by_object_id(object_id); 
+
+  if(obj) {
+  	obj->inc_ts_core_matrix(a, b, inc);
+  } else {
+	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
+	if(obj) {
+		obj->inc_ts_core_matrix(a, b, inc);
+      		if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
+        		get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
+    	}
+  }
+}
 
 extern "C"
 //__attribute__((destructor))
@@ -444,129 +456,6 @@ void inc_true_core_count_by_object_id(int object_id, double inc)
       		if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
         		get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
     	}
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_waw_true_matrix(uint64_t address, int a, int b, double inc)
-{
-  //fprintf(stderr, "increment per object happens for true sharing\n");
-  adm_object_t* obj = adm_db_find_by_address(address);
-  if(obj) {
-    obj->inc_ts_matrix(a, b, inc);
-    //obj->inc_writer_count(a, inc);
-    obj->inc_writer_count(b, inc);
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_waw_true_matrix_by_object_id(int object_id, int a, int b, double inc)
-{
-  //fprintf(stderr, "increment per object happens for false sharing\n");
-  adm_object_t* obj = adm_db_find_by_object_id(object_id); 
-
-  if(obj) {
-  	obj->inc_ts_matrix(a, b, inc);
-    //obj->inc_writer_count(a, inc);
-    obj->inc_writer_count(b, inc);
-  } else {
-	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
-	if(obj) {
-		obj->inc_ts_matrix(a, b, inc);
-        //obj->inc_writer_count(a, inc);
-        obj->inc_writer_count(b, inc);
-      	if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
-        	get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
-    	}
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_raw_true_matrix(uint64_t address, int a, int b, double inc)
-{
-  //fprintf(stderr, "increment per object happens for true sharing\n");
-  adm_object_t* obj = adm_db_find_by_address(address);
-  if(obj) {
-    obj->inc_ts_matrix(a, b, inc);
-    //obj->inc_writer_count(a, inc);
-    obj->inc_reader_count(b, inc);
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_raw_true_matrix_by_object_id(int object_id, int a, int b, double inc)
-{
-  //fprintf(stderr, "increment per object happens for false sharing\n");
-  adm_object_t* obj = adm_db_find_by_object_id(object_id); 
-
-  if(obj) {
-  	obj->inc_ts_matrix(a, b, inc);
-    //obj->inc_writer_count(a, inc);
-    obj->inc_reader_count(b, inc);
-  } else {
-	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
-	if(obj) {
-		obj->inc_ts_matrix(a, b, inc);
-        //obj->inc_writer_count(a, inc);
-        obj->inc_reader_count(b, inc);
-      	if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
-        	get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
-    	}
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_true_core_matrix(uint64_t address, int a, int b, double inc)
-{
-  adm_object_t* obj = adm_db_find_by_address(address);
-  if(obj) {
-    obj->inc_ts_core_matrix(a, b, inc);
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_true_core_matrix_by_object_id(int object_id, int a, int b, double inc)
-{
-  //fprintf(stderr, "increment per object happens for false sharing\n");
-  adm_object_t* obj = adm_db_find_by_object_id(object_id); 
-
-  if(obj) {
-  	obj->inc_ts_core_matrix(a, b, inc);
-  } else {
-	obj = adm_db_insert_by_object_id(object_id, ADM_STATE_ALLOC);
-	if(obj) {
-		obj->inc_ts_core_matrix(a, b, inc);
-      		if((obj->meta.meta[ADM_META_STACK_TYPE] = stacks->malloc()))
-        		get_stack(*static_cast<adamant::stack_t*>(obj->meta.meta[ADM_META_STACK_TYPE]));
-    	}
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_read_count(uint64_t address, int a, double inc)
-{
-  //fprintf(stderr, "increment per object happens for true sharing\n");
-  adm_object_t* obj = adm_db_find_by_address(address);
-  if(obj) {
-    obj->inc_reader_count(a, inc);
-  }
-}
-
-extern "C"
-//__attribute__((destructor))
-void inc_write_count(uint64_t address, int a, double inc)
-{
-  //fprintf(stderr, "increment per object happens for true sharing\n");
-  adm_object_t* obj = adm_db_find_by_address(address);
-  if(obj) {
-    obj->inc_writer_count(a, inc);
   }
 }
 
