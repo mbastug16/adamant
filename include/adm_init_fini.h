@@ -2,11 +2,17 @@ void adm_initialize();
 
 void adm_finalize(int flag, char output_directory[], const char * executable_name, int pid);
 
-//void inc_false_matrix(uint64_t address, int a, int b, double inc_false_matrix);
+void core_matrix_size_set(int size);
 
-void inc_false_matrix(uint64_t address1, uint64_t address2, int a, int b, double inc_false_matrix);
+void matrix_size_set(int size);
 
-void inc_true_matrix(uint64_t address, int a, int b, double inc_false_matrix);
+void inc_false_core_matrix(uint64_t address1, uint64_t address2, int a, int b, double inc_false_matrix);
+
+void inc_true_core_matrix(uint64_t address, int a, int b, double inc_false_matrix);
+
+void inc_false_core_matrix_by_object_id(int id, int a, int b, double inc_false_matrix);
+
+void inc_true_core_matrix_by_object_id(int id, int a, int b, double inc_false_matrix);
 
 void malloc_adm(void* ptr, size_t size, int object_id);
 
@@ -43,3 +49,15 @@ void inc_false_count(uint64_t address1, uint64_t address2, double inc);
 void inc_false_core_count(uint64_t address1, uint64_t address2, double inc);
 
 int get_object_id_by_address(uint64_t address);
+
+void inc_true_count_by_object_id(int id, double inc);
+
+void inc_true_core_count_by_object_id(int id, double inc);
+
+void inc_false_count_by_object_id(int id, double inc);
+
+void inc_false_core_count_by_object_id(int id, double inc);
+
+void inc_read_count(uint64_t address1, int tid, double inc);
+
+void inc_write_count(uint64_t address1, int tid, double inc);

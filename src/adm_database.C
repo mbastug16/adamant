@@ -279,6 +279,23 @@ char* adamant::adm_db_get_var_name(uint64_t address) noexcept {
 	return static_cast<char*>(obj->meta.meta[ADM_META_VAR_TYPE]);
 }
 
+static const char* sharing_char(adm_object_t* object)
+{
+    int sharing = object->get_sharing_char();
+    if(sharing == PRIVATE)
+        return "Private";
+    else if (sharing == THEO_PRIVATE)
+        return "Theoretically Private";
+    else if (sharing == READONLY)
+        return "Readonly";
+    else if (sharing == MIGRATORY)
+        return "Migratory";
+    else if (sharing == PRODUCER_CONSUMER)
+        return "Producer Consumer";
+    else
+        return "Unidentified";
+}
+
 ADM_VISIBILITY
 void adamant::adm_db_print(char output_directory[], const char * executable_name, int pid ) noexcept
 {
@@ -530,7 +547,6 @@ void adamant::adm_db_print(char output_directory[], const char * executable_name
 		adm_object_t* obj = adm_db_find_by_object_id((*it).object_id); 
 		FILE * fp;
 
-
 		char file_name[PATH_MAX];
 		char append[100];
 		//strcpy (file_name, address_index);
@@ -552,7 +568,7 @@ void adamant::adm_db_print(char output_directory[], const char * executable_name
       				func += len;
     			}
   		}
-		fprintf(comm_fp, "\n");
+		fprintf(comm_fp, ", Data Sharing Characteristics: %s\n", sharing_char(obj));
  
 		// after
 

@@ -459,6 +459,28 @@ void inc_true_core_count_by_object_id(int object_id, double inc)
   }
 }
 
+extern "C"
+//__attribute__((destructor))
+void inc_read_count(uint64_t address, int a, double inc)
+{
+  //fprintf(stderr, "increment per object happens for true sharing\n");
+  adm_object_t* obj = adm_db_find_by_address(address);
+  if(obj) {
+    obj->inc_reader_count(a, inc);
+  }
+}
+
+extern "C"
+//__attribute__((destructor))
+void inc_write_count(uint64_t address, int a, double inc)
+{
+  //fprintf(stderr, "increment per object happens for true sharing\n");
+  adm_object_t* obj = adm_db_find_by_address(address);
+  if(obj) {
+    obj->inc_writer_count(a, inc);
+  }
+}
+
 ADM_VISIBILITY
 void adamant::adm_out(const void* buffer, const unsigned int size)
 {

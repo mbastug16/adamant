@@ -13,6 +13,13 @@
 #include <iomanip>
 #include <pthread.h>
 
+#define PRIVATE 0
+#define THEO_PRIVATE 1
+#define READONLY 2
+#define PRODUCER_CONSUMER 3
+#define MIGRATORY 4
+#define MAX_THREADS 128
+
 static pthread_mutex_t object_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static pthread_mutex_t ts_count_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -79,6 +86,8 @@ class adm_object_t
     double true_sharing_core_matrix[1024][1024];
     double true_sharing_count;
     double true_sharing_core_count;
+    double reader_count[MAX_THREADS];
+    double writer_count[MAX_THREADS];
     adm_object_t* parent;
     adm_object_t* left;
     adm_object_t* right;
@@ -234,6 +243,10 @@ class adm_object_t
 	pthread_mutex_unlock(&ts_core_count_lock);
     };
 
+    void inc_reader_count(int tid, double inc) { reader_count[tid] = reader_count[tid] + inc;};
+
+    void inc_writer_count(int tid, double inc) { writer_count[tid] = writer_count[tid] + inc;};
+
     double get_fs_count() const noexcept { return false_sharing_count; };
 
     double get_fs_core_count() const noexcept { return false_sharing_core_count; };
@@ -342,6 +355,33 @@ class adm_object_t
             std::cout << std::setw(indent) << ' ';
         }
         std::cout<< "id: " << this->object_id << " comm count: " << this->get_fs_count() + this->get_ts_count() << "\n ";
+    }
+
+    int get_sharing_char(){
+        int writers = 0, readers = 0;
+        for(int i=0; i<MAX_THREADS; i++){
+            if(reader_count[i]!=0)
+                readers++;
+            if(writer_count[i]!=0)
+                writers++;
+        }
+        printf("For object %d: Readers: %d, Writers: %d\n", object_id, readers, writers);
+        if(writers == 0 && readers >= 0){
+            return READONLY;
+        } else if((writers == 1 && readers == 0)){
+            return THEO_PRIVATE;
+        }else if((writers == 1 && readers == 1)){
+            for(int i=0; i<MAX_THREADS; i++){
+                if(reader_count[i] !=0 && writer_count[i] != 0)
+                    return PRIVATE;
+            }
+            return MIGRATORY;
+        } else if(writers>=readers){
+            return MIGRATORY;
+        } else if(writers > 0) { // from the last check we know that readers>writers, one last error check
+            return PRODUCER_CONSUMER;
+        }
+        return -1;
     }
 
 };
